@@ -96,7 +96,9 @@ app.controller("NodeController", function($scope, $rootScope, $http, $timeout) {
     c.push("icon");
     return c.join(" ");
   };
-
+$scope.get = function() {
+    $http.get("download/" + n.$path);
+  };
   $scope.remove = function() {
     $http.delete("download/" + n.$path);
   };
