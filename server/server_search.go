@@ -81,6 +81,18 @@ var defaultSearchConfig = []byte(`{
 			"peers": "td:nth-child(6) .progress-bar:nth-child(2)"
 		}
 	},
+	"kickass": {
+		"name": "kickass",
+		"url": "https://kat.sx/usearch/{{query}}/{{page:1}}",
+		"list": "table.mainSearchTable .panel-body > table tbody tr",
+		"result": {
+			"name": "td:nth-child(2) a",
+			"url": ["td:nth-child(2) a", "@href"],
+			"magnet": ["a[title=Magnet\\ link]", "@href"],
+			"seeds": "td:nth-child(6) .progress-bar:nth-child(1)",
+			"peers": "td:nth-child(6) .progress-bar:nth-child(2)"
+		}
+	},
 	"rbg": {
 		"name": "RARBG",
 		"url": "https://rarbg.to/torrents.php?search={{query}}&order=seeders&by=DESC&page={{page:1}}",
