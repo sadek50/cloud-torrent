@@ -53,12 +53,45 @@ func (s *Server) serveFiles(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case "GET":
 			if info.IsDir() {
-				w.Header().Set("Content-Type", "application/zip")
+				 
+				
+				/*w.Header().Set("Content-Type", "application/zip")
 				w.WriteHeader(200)
 				//write .zip archive directly into response
 				a := archive.NewZipWriter(w)
 				a.AddDir(file)
 				a.Close()
+				*/
+				 
+ 				    // Get a Buffer to Write To
+				    outFile, err := os.Create(file+`.zip`)
+				    if err != nil {
+					fmt.Println(err)
+				    }
+				    defer outFile.Close()
+ 				    // Create a new zip archive.
+				    w := zip.NewWriter(outFile)
+ 				    // Add some files to the archive.
+				    addFiles(w, file, "")
+ 				    if err != nil {
+					fmt.Println(err)
+				    }
+ 				    // Make sure to check the error on Close.
+				    err = w.Close()
+				    if err != nil {
+					fmt.Println(err)
+				    }
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
 			} else {
 				f, err := os.Open(file)
 				if err != nil {
@@ -79,6 +112,41 @@ func (s *Server) serveFiles(w http.ResponseWriter, r *http.Request) {
 	}
 	s.static.ServeHTTP(w, r)
 }
+
+
+func addFiles(w *zip.Writer, basePath, baseInZip string) {
+    // Open the Directory
+    files, err := ioutil.ReadDir(basePath)
+    if err != nil {
+        fmt.Println(err)
+    }
+     for _, file := range files {
+        fmt.Println(basePath + file.Name())
+        if !file.IsDir() {
+            dat, err := ioutil.ReadFile(basePath + file.Name())
+            if err != nil {
+                fmt.Println(err)
+            }
+             // Add some files to the archive.
+            f, err := w.Create(baseInZip + file.Name())
+            if err != nil {
+                fmt.Println(err)
+            }
+            _, err = f.Write(dat)
+            if err != nil {
+                fmt.Println(err)
+            }
+        } else if file.IsDir() {
+             // Recurse
+            newBase := basePath + file.Name() + "/"
+            fmt.Println("Recursing and Adding SubDir: " + file.Name())
+            fmt.Println("Recursing and Adding SubDir: " + newBase)
+             addFiles(w, newBase, file.Name() + "/")
+        }
+    }
+}
+
+
 
 //custom directory walk
 
